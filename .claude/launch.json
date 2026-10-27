@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "devly",
+      "runtimeExecutable": "npm.cmd",
+      "runtimeArgs": ["run", "dev"],
+      "port": 4340
+    },
+    {
+      "name": "devly-preview",
+      "runtimeExecutable": "npm.cmd",
+      "runtimeArgs": ["run", "preview"],
+      "port": 4340
+    }
+  ]
+}

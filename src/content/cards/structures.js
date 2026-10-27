@@ -1,0 +1,12 @@
+export default [
+  { id: "trie", front: "Trie for prefix search", back: "A tree where each edge is a character, so all words sharing a prefix share a path. Store the top few completions at each node to answer a prefix in O(prefix length).", tags: ["search"] },
+  { id: "inverted-index", front: "Inverted index", back: "A map from each term to the list of documents containing it, often with positions. Answers keyword queries by intersecting short lists instead of scanning documents.", tags: ["search", "data-model"] },
+  { id: "bloom-filter", front: "Bloom filter", back: "A bit array plus several hash functions that says 'definitely not present' or 'maybe present'. Tiny and fast; used to skip disk reads or already-seen URLs.", tags: ["storage", "caching"] },
+  { id: "count-min-sketch", front: "Count-min sketch", back: "A small grid of counters with one hash per row; take the minimum across rows as the estimate. Approximate frequencies of millions of items in fixed memory, never undercounting.", tags: ["estimation", "realtime"] },
+  { id: "hyperloglog", front: "HyperLogLog", back: "Estimates how many distinct items you've seen using about 12 KB, with roughly 1% error. Perfect for unique visitors where exact counts aren't worth the memory.", tags: ["estimation", "storage"] },
+  { id: "geohash", front: "Geohash", back: "Encodes latitude/longitude into a short string where a shared prefix means nearby. Search a cell and its eight neighbors to find close points with a plain index.", tags: ["search", "data-model"] },
+  { id: "quadtree", front: "Quadtree", back: "Splits a map region into four children whenever it holds too many points, so dense cities get small cells and empty areas stay large. Good for nearest-neighbor searches.", tags: ["search", "data-model"] },
+  { id: "sorted-set", front: "Sorted set (Redis ZSET)", back: "Members with scores kept in order, with O(log n) updates and rank lookups. The go-to structure for leaderboards, time-ordered queues and top-N.", tags: ["data-model", "caching"] },
+  { id: "min-heap-top-k", front: "Top-K with a min-heap", back: "Keep a heap of size K; for each new item, if it beats the smallest, swap it in. O(n log K) time and only K items of memory.", tags: ["search", "estimation"] },
+  { id: "graph-shortest-path", front: "Shortest paths on road maps", back: "Dijkstra explores outward from the start by distance; A* adds a straight-line estimate to head toward the goal. At continent scale, precomputed shortcuts (contraction hierarchies) make queries milliseconds.", tags: ["search"] }
+];

@@ -1,0 +1,9 @@
+export default [
+  { id: "oauth2", front: "OAuth 2.0 authorization code flow", back: "The app sends the user to the identity provider, gets back a short-lived code, and swaps it server-side for tokens. The app never sees the user's password.", tags: ["security", "api"] },
+  { id: "jwt", front: "JWT trade-off", back: "A signed token carrying claims, verifiable without a database lookup. The catch: it can't be revoked before expiry, so keep access tokens short-lived and refresh them.", tags: ["security"] },
+  { id: "hmac-signing", front: "HMAC request signing", back: "Sender hashes the payload with a shared secret and sends the signature; the receiver recomputes it. Proves the message came from the secret holder and wasn't altered. Add a timestamp to stop replays.", tags: ["security", "api"] },
+  { id: "end-to-end-encryption", front: "End-to-end encryption", back: "Messages are encrypted on the sender's device with keys only the recipients hold. The server stores and forwards ciphertext it cannot read.", tags: ["security"] },
+  { id: "envelope-encryption", front: "Envelope encryption", back: "Data is encrypted with a per-item data key, and that key is encrypted with a master key held in a KMS. Rotating the master key only re-wraps small keys, not all data.", tags: ["security", "storage"] },
+  { id: "zero-knowledge-sync", front: "Zero-knowledge sync", back: "The client derives an encryption key from the user's master password and encrypts everything before upload. The server only sees blobs, so a server breach leaks nothing readable.", tags: ["security"] },
+  { id: "api-keys-scopes", front: "API keys and scopes", back: "Hand out keys tied to an account and a list of allowed actions. Store only a hash of the key, show it once, and support rotation and revocation.", tags: ["security", "api"] }
+];
