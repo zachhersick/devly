@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { accuracyByTag, addDays, cardDeck, dailyProblem, designScore, emptyAttempt, finishStep, longestStreak, quizPosition, rateCard, streak, validateContent } from "../src/lib/model.js";
+import { accuracyByTag, addDays, cardDeck, dailyProblem, designScore, emptyAttempt, finishStep, longestStreak, quizPosition, rateCard, streak, validateContent, validRecord } from "../src/lib/model.js";
 
 const problems = ["a", "b", "c"].map((id) => ({ id, quiz: [{ answer: 0, tag: "api" }, { answer: 1, tag: "caching" }], cardIds: [`${id}-card`] }));
 
@@ -92,4 +92,27 @@ test("validateContent flags broken problems", () => {
   const bad = { id: "x", title: "X", prompt: "p", difficulty: "easy", tags: ["nope"], requirements: { functional: ["f"] }, quiz: [{ choices: ["a", "b"], answer: 5, why: "w", tag: "api" }], diagram: { nodes: [{ id: "n", kind: "db", x: 10, y: 10 }], edges: [{ from: "n", to: "m" }], steps: [] }, modelAnswer: [{}], keyPoints: ["k"], cardIds: ["missing"] };
   const errors = validateContent([bad], []);
   for (const fragment of ["unknown tag nope", "answer out of range", "unknown node", "never added", "unknown card missing", "at least 4"]) assert.ok(errors.some((e) => e.includes(fragment)), fragment);
+});
+
+test("validRecord accepts what the app writes and rejects malformed backups", () => {
+  const at = 1;
+  const good = [
+    { id: "settings", kind: "settings", theme: "dark", updatedAt: at },
+    { id: "day:2026-10-26", kind: "day", date: "2026-10-26", problemId: "a", done: ["a:quiz"], updatedAt: at },
+    { ...emptyAttempt("a", "2026-10-26"), updatedAt: at },
+    { ...rateCard(undefined, "x", "good", "2026-10-26"), updatedAt: at }
+  ];
+  for (const record of good) assert.ok(validRecord(record), record.id);
+  const bad = [
+    null,
+    { id: "settings", kind: "settings" },
+    { id: "other", kind: "settings", updatedAt: at },
+    { id: "day:2026-10-26", kind: "day", date: "2026-10-26", problemId: "a", updatedAt: at },
+    { id: "attempt:b", kind: "attempt", problemId: "a", done: [], updatedAt: at },
+    { id: "attempt:a", kind: "attempt", problemId: "a", updatedAt: at },
+    { id: "attempt:a", kind: "attempt", problemId: "a", done: [], quiz: "x", updatedAt: at },
+    { id: "card:x", kind: "card", cardId: "x", box: 99, due: "2026-10-26", updatedAt: at },
+    { id: "__proto__", kind: "mystery", updatedAt: at }
+  ];
+  for (const record of bad) assert.equal(validRecord(record), false, JSON.stringify(record));
 });
