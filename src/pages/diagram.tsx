@@ -43,8 +43,8 @@ export function DiagramPage({ id }: { id: string }) {
       title="Diagram"
     >
       <Progress current={step} total={steps.length} />
-      <Card className="whiteboard p-2">
-        <button aria-label={last ? "Diagram complete" : "Show next step"} className="block w-full" onClick={() => !last && move(step + 1)} type="button">
+      <Card className="p-2">
+        <button aria-label={last ? "Diagram complete" : "Show next step"} className="whiteboard block w-full rounded-[10px]" onClick={() => !last && move(step + 1)} type="button">
           <DiagramView diagram={problem.diagram} step={step} />
         </button>
       </Card>

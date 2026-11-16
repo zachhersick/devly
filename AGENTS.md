@@ -135,7 +135,11 @@ deployment validation.
   commit anything personal or secret, since every commit is public.
 - Vercel builds with `npm run build` and serves `dist/` at devly.zachhersick.com,
   deploying on every push to `main` once the project is imported. There are no
-  functions or environment variables. See `README.md` for the one-time setup.
+  functions or environment variables. The Vercel project imports the repo with
+  the "Other" preset, and `vercel.json` supplies the build settings.
+- `README.md` is public facing: what Devly is, privacy, running locally and
+  adding problems. Keep it in step with features, and keep personal or
+  deployment-account details out of it. Screenshots live in `docs/screenshots/`.
 - `package.json` `overrides` pin patched `glob` and `minimatch` under
   `vite-plugin-pwa`'s `workbox-build` (build-time only). Drop them once
   `vite-plugin-pwa` ships with patched versions; `npm audit --omit=dev` must stay at 0.
