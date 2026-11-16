@@ -129,8 +129,10 @@ deployment validation.
 
 ## Git, build and deployment
 
-- The repository is `https://github.com/zachhersick/devly` (private); `main` is
-  the deploy branch. There is no CI workflow. Commit or push only when Zach asks.
+- The repository is `https://github.com/zachhersick/devly` (public, with secret
+  scanning, push protection and Dependabot alerts on); `main` is the deploy
+  branch. There is no CI workflow. Commit or push only when Zach asks, and never
+  commit anything personal or secret, since every commit is public.
 - Vercel builds with `npm run build` and serves `dist/` at devly.zachhersick.com,
   deploying on every push to `main` once the project is imported. There are no
   functions or environment variables. See `README.md` for the one-time setup.
