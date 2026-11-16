@@ -2,7 +2,7 @@
 // Tap to flip, then rate; ratings schedule the next review (Leitner boxes).
 import { RotateCcw } from "lucide-react";
 import { useState } from "react";
-import { Card, FadeIn, motion } from "@/components/kit";
+import { Card, FadeIn, motion, softSpring } from "@/components/kit";
 import { PracticeFrame, Progress, tagLabel, useAttempt, type Problem } from "@/components/problem";
 import { Button } from "@/components/ui/button";
 import { CARD_INDEX, CARDS, PROBLEM_INDEX } from "@/content/index.js";
@@ -56,7 +56,7 @@ export function CardsPage({ id }: { id: string }) {
       >
         <Progress current={deck.length} total={Math.max(deck.length, 1)} />
         <FadeIn className="flex flex-col items-center gap-2 py-10 text-center">
-          <span className="text-[40px] font-semibold tracking-tight tabular">{deck.length}</span>
+          <span className="text-[40px] font-medium tabular">{deck.length}</span>
           <span className="text-[15px] text-muted-foreground">cards reviewed. They'll come back when they're due.</span>
         </FadeIn>
       </PracticeFrame>
@@ -90,13 +90,13 @@ export function CardsPage({ id }: { id: string }) {
         {position + 1} of {deck.length} · {own ? "today's concept" : "review"}
       </span>
       <button aria-label={flipped ? "Card answer" : "Flip card"} className="block w-full [perspective:1200px]" onClick={() => setFlipped(!flipped)} type="button">
-        <motion.div animate={{ rotateY: flipped ? 180 : 0 }} className="relative min-h-72 [transform-style:preserve-3d]" key={current.id} transition={{ type: "spring", stiffness: 260, damping: 28 }}>
-          <Card className="tint-glow absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center [backface-visibility:hidden]">
-            <span className="text-[24px] leading-tight font-semibold tracking-[-0.02em]">{current.front}</span>
-            <span className="text-[13px] text-muted-foreground capitalize">{current.tags.map(tagLabel).join(" · ")}</span>
+        <motion.div animate={{ rotateY: flipped ? 180 : 0 }} className="relative min-h-72 [transform-style:preserve-3d]" key={current.id} transition={softSpring}>
+          <Card className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center [backface-visibility:hidden]">
+            <span className="text-[24px] leading-tight font-medium">{current.front}</span>
+            <span className="text-[13px] text-muted-foreground">{current.tags.map(tagLabel).join(" · ")}</span>
           </Card>
           <Card className="absolute inset-0 flex items-center p-6 text-left [backface-visibility:hidden] [transform:rotateY(180deg)]">
-            <p className="text-[16.5px] leading-relaxed">{current.back}</p>
+            <p className="text-[16px] leading-relaxed">{current.back}</p>
           </Card>
         </motion.div>
       </button>

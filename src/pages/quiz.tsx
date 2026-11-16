@@ -48,7 +48,7 @@ export function QuizPage({ id }: { id: string }) {
       >
         <Progress current={problem.quiz.length} marks={marks} total={problem.quiz.length} />
         <FadeIn className="flex flex-col items-center gap-1 py-6 text-center">
-          <span className="text-[56px] leading-none font-semibold tracking-tight tabular">
+          <span className="text-[56px] leading-none font-medium tabular">
             {score.right}
             <span className="text-[28px] text-muted-foreground">/{score.total}</span>
           </span>
@@ -58,11 +58,11 @@ export function QuizPage({ id }: { id: string }) {
           {problem.quiz.map((item, i) => (
             <Card className="flex gap-3 p-4" key={item.q}>
               <span className={cn("mt-0.5 grid size-6 shrink-0 place-items-center rounded-full", marks[i] === "right" ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive")}>
-                {marks[i] === "right" ? <Check className="size-3.5" strokeWidth={3} /> : <X className="size-3.5" strokeWidth={3} />}
+                {marks[i] === "right" ? <Check className="size-3.5" strokeWidth={2.5} /> : <X className="size-3.5" strokeWidth={2.5} />}
               </span>
               <div className="flex min-w-0 flex-col gap-1">
-                <span className="text-[14.5px] font-medium">{item.q}</span>
-                <span className="text-[13.5px] text-muted-foreground">{item.choices[item.answer]}</span>
+                <span className="text-[14px] font-medium">{item.q}</span>
+                <span className="text-[13px] text-muted-foreground">{item.choices[item.answer]}</span>
               </div>
             </Card>
           ))}
@@ -94,19 +94,22 @@ export function QuizPage({ id }: { id: string }) {
       <Progress current={index} marks={marks} total={problem.quiz.length} />
       <motion.div animate={{ opacity: 1, x: 0 }} className="flex flex-1 flex-col gap-5" initial={{ opacity: 0, x: 24 }} key={index}>
         <div className="flex flex-col gap-2">
-          <span className="text-[13px] font-medium text-muted-foreground capitalize">
-            {index + 1} of {problem.quiz.length} · {tagLabel(item.tag)}
+          <span className="text-[13px] text-muted-foreground">
+            <span className="font-mono text-[12px] tabular">
+              {index + 1}/{problem.quiz.length}
+            </span>{" "}
+            · {tagLabel(item.tag)}
           </span>
-          <h1 className="text-[21px] leading-snug font-semibold tracking-[-0.01em]">{item.q}</h1>
+          <h1 className="text-[20px] leading-snug font-medium">{item.q}</h1>
         </div>
-        <div className="mt-auto flex flex-col gap-2.5">
+        <div className="mt-auto flex flex-col gap-3">
           {item.choices.map((choice, i) => {
             const right = answered && i === item.answer;
             const wrong = answered && i === picked && i !== item.answer;
             return (
               <button
                 className={cn(
-                  "surface flex min-h-14 items-center gap-3 rounded-2xl px-4 py-3 text-left text-[15.5px] leading-snug font-medium transition-colors active:scale-[0.99]",
+                  "surface flex min-h-14 items-center gap-3 rounded-2xl px-4 py-3 text-left text-[15px] leading-snug font-medium transition-colors active:scale-[0.99]",
                   right && "border-success bg-success/12",
                   wrong && "border-destructive bg-destructive/12",
                   answered && !right && !wrong && "opacity-55"
@@ -119,8 +122,8 @@ export function QuizPage({ id }: { id: string }) {
                 }}
                 type="button"
               >
-                <span className={cn("grid size-7 shrink-0 place-items-center rounded-full bg-muted text-[13px] font-semibold", right && "bg-success text-white", wrong && "bg-destructive text-white")}>
-                  {right ? <Check className="size-4" strokeWidth={3} /> : wrong ? <X className="size-4" strokeWidth={3} /> : String.fromCharCode(65 + i)}
+                <span className={cn("grid size-7 shrink-0 place-items-center rounded-full bg-muted text-[13px] font-medium", right && "bg-success text-white", wrong && "bg-destructive text-white")}>
+                  {right ? <Check className="size-4" strokeWidth={2.5} /> : wrong ? <X className="size-4" strokeWidth={2.5} /> : String.fromCharCode(65 + i)}
                 </span>
                 <span>{choice}</span>
               </button>
@@ -129,8 +132,8 @@ export function QuizPage({ id }: { id: string }) {
         </div>
         {answered ? (
           <FadeIn>
-            <Card className={cn("p-4 text-[14.5px] leading-relaxed", picked === item.answer ? "bg-success/8" : "bg-destructive/8")}>
-              <span className="font-semibold">{picked === item.answer ? "Right. " : "Not quite. "}</span>
+            <Card className={cn("p-4 text-[14px] leading-relaxed", picked === item.answer ? "bg-success/8" : "bg-destructive/8")}>
+              <span className="font-medium">{picked === item.answer ? "Right. " : "Not quite. "}</span>
               {item.why}
             </Card>
           </FadeIn>

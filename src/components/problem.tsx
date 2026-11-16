@@ -8,6 +8,7 @@ import { cardDeck, designScore, quizPosition, quizScore } from "@/lib/model.js";
 import { attemptFor, cardStates, records, today } from "@/lib/store.js";
 import { useValue } from "@/lib/use-signal";
 import { cn } from "@/lib/utils";
+import { DiagramView } from "@/components/diagram-view";
 
 export type Problem = {
   id: string;
@@ -35,17 +36,36 @@ export type Attempt = {
   completedOn?: string;
 };
 
-const DIFFICULTY = {
-  easy: "bg-success/15 text-success",
-  medium: "bg-pr/15 text-pr",
-  hard: "bg-destructive/15 text-destructive"
-};
+const DIFFICULTY = { easy: "bg-success", medium: "bg-pr", hard: "bg-destructive" };
 
 export function Difficulty({ level }: { level: Problem["difficulty"] }) {
-  return <span className={cn("rounded-full px-2.5 py-0.5 text-[12px] font-semibold capitalize", DIFFICULTY[level])}>{level}</span>;
+  return (
+    <span className="flex shrink-0 items-center gap-1.5 text-[13px] text-muted-foreground">
+      <span className={cn("size-1.5 rounded-full", DIFFICULTY[level])} />
+      {level[0].toUpperCase() + level.slice(1)}
+    </span>
+  );
 }
 
-export const tagLabel = (tag: string) => tag.replace(/-/g, " ");
+/** "data-model" → "Data model" */
+export const tagLabel = (tag: string) => (tag === "api" ? "API" : tag[0].toUpperCase() + tag.slice(1).replace(/-/g, " "));
+
+/**
+ * The signature: a problem's four steps logged like sets, one tick each.
+ * Ticks fill with the accent as steps are done.
+ */
+export function SetTicks({ done, label = false }: { done: number; label?: boolean }) {
+  return (
+    <span aria-label={`${done} of 4 sets done`} className="flex items-center gap-2" role="img">
+      <span className="flex items-center gap-1">
+        {[0, 1, 2, 3].map((i) => (
+          <span className={cn("h-3.5 w-1 rounded-full transition-colors duration-200", i < done ? "bg-primary" : "bg-foreground/15")} key={i} />
+        ))}
+      </span>
+      {label ? <span className="font-mono text-[12px] text-muted-foreground tabular">{done}/4 sets</span> : null}
+    </span>
+  );
+}
 
 export function useAttempt(problemId: string): Attempt {
   useValue(records);
@@ -55,23 +75,31 @@ export function useAttempt(problemId: string): Attempt {
 export function Brief({ problem }: { problem: Problem }) {
   const [open, setOpen] = useState(false);
   return (
-    <Card className="tint-glow flex flex-col gap-3 p-5">
-      <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
-        <Difficulty level={problem.difficulty} />
-        <span>about {problem.minutes} min</span>
+    <Card className="flex flex-col gap-4 p-5">
+      <div className="flex gap-4">
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <div className="flex items-center gap-3">
+            <Difficulty level={problem.difficulty} />
+            <span className="font-mono text-[12px] text-muted-foreground">~{problem.minutes} min</span>
+          </div>
+          <h2 className="text-[24px] leading-tight font-medium">{problem.title}</h2>
+        </div>
+        {/* The moment: the architecture you'll build today, drawn on a whiteboard. */}
+        <a aria-label="Open the diagram walkthrough" className="whiteboard block w-28 shrink-0 self-start rounded-[10px] p-1 transition-opacity duration-150 active:opacity-70" href={`#/diagram/${problem.id}`}>
+          <DiagramView compact diagram={problem.diagram} step={problem.diagram.steps.length - 1} />
+        </a>
       </div>
-      <h2 className="text-[24px] leading-tight font-semibold tracking-[-0.02em]">{problem.title}</h2>
-      <p className="text-[15.5px] leading-relaxed text-foreground/85">{problem.prompt}</p>
-      <div className="flex flex-wrap gap-1.5">
+      <p className="text-[15px] leading-relaxed text-foreground/85">{problem.prompt}</p>
+      <div className="flex flex-wrap gap-2">
         {problem.tags.map((tag) => (
-          <span className="rounded-full bg-muted px-2.5 py-1 text-[12px] font-medium text-muted-foreground capitalize" key={tag}>
+          <span className="rounded-md bg-muted px-2 py-0.5 text-[12px] text-muted-foreground" key={tag}>
             {tagLabel(tag)}
           </span>
         ))}
       </div>
-      <button aria-expanded={open} className="-mx-1 mt-1 flex items-center gap-1 self-start rounded-full px-1 text-[14px] font-medium text-primary" onClick={() => setOpen(!open)} type="button">
+      <button aria-expanded={open} className="-mx-1 flex items-center gap-1 self-start rounded-md px-1 text-[14px] font-medium text-foreground/80" onClick={() => setOpen(!open)} type="button">
         Requirements
-        <ChevronDown className={cn("size-4 transition-transform", open && "rotate-180")} strokeWidth={2.6} />
+        <ChevronDown className={cn("size-4 text-muted-foreground transition-transform duration-200", open && "rotate-180")} strokeWidth={2} />
       </button>
       <AnimatePresence initial={false}>
         {open ? (
@@ -86,7 +114,7 @@ export function Brief({ problem }: { problem: Problem }) {
 
 export function Requirements({ problem }: { problem: Problem }) {
   return (
-    <div className="grid gap-3 text-[14.5px] leading-snug">
+    <div className="grid gap-3 text-[14px] leading-snug">
       {(
         [
           ["Functional", problem.requirements.functional],
@@ -95,7 +123,7 @@ export function Requirements({ problem }: { problem: Problem }) {
       ).map(([title, items]) =>
         items?.length ? (
           <div key={title}>
-            <p className="mb-1 text-[12.5px] font-semibold tracking-wide text-muted-foreground uppercase">{title}</p>
+            <p className="mb-1 text-[13px] text-muted-foreground">{title}</p>
             <ul className="flex list-disc flex-col gap-1 pl-5">
               {items.map((item) => (
                 <li key={item}>{item}</li>
@@ -117,7 +145,7 @@ export function Steps({ problem }: { problem: Problem }) {
   const score = quizScore(attempt, problem);
   const deckSize = cardDeck(problem, CARDS, states, day).length;
   const done = (step: string) => attempt.done.includes(step);
-  const check = <Check className="size-5 text-success" strokeWidth={3} />;
+  const check = <Check className="size-5 text-success" strokeWidth={2.5} />;
   const steps = [
     { step: "quiz", icon: ListChecks, title: "Quiz", subtitle: done("quiz") ? `${score.right} of ${score.total} right` : answered ? `${answered} of ${problem.quiz.length} answered` : `${problem.quiz.length} quick questions` },
     { step: "diagram", icon: Network, title: "Diagram walkthrough", subtitle: done("diagram") ? "Walked through" : attempt.diagram.step ? `Step ${attempt.diagram.step + 1} of ${problem.diagram.steps.length}` : `Build it in ${problem.diagram.steps.length} steps` },
@@ -125,10 +153,10 @@ export function Steps({ problem }: { problem: Problem }) {
     { step: "cards", icon: Layers, title: "Concept cards", subtitle: done("cards") ? "Reviewed" : `${deckSize} cards` }
   ];
   return (
-    <Section title="Steps" action={`${attempt.done.length} of 4 done`}>
+    <Section title="Sets" action={<SetTicks done={attempt.done.length} label />}>
       <List>
         {steps.map((item) => (
-          <Row chevron={!done(item.step)} href={`#/${item.step}/${problem.id}`} icon={item.icon} iconClass={done(item.step) ? "bg-success/15 text-success" : undefined} key={item.step} subtitle={item.subtitle} title={item.title}>
+          <Row chevron={!done(item.step)} href={`#/${item.step}/${problem.id}`} icon={item.icon} key={item.step} subtitle={item.subtitle} title={item.title}>
             {done(item.step) ? check : null}
           </Row>
         ))}
@@ -144,7 +172,7 @@ export function Progress({ total, current, marks }: { total: number; current: nu
       {Array.from({ length: total }, (_, i) => (
         <span
           className={cn(
-            "h-1.5 flex-1 rounded-full transition-colors",
+            "h-1.5 flex-1 rounded-full transition-colors duration-200",
             marks?.[i] === "right" ? "bg-success" : marks?.[i] === "wrong" ? "bg-destructive" : i < current ? "bg-primary" : i === current ? "bg-primary/45" : "bg-muted"
           )}
           key={i}

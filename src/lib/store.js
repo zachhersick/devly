@@ -5,7 +5,7 @@ import { PROBLEMS } from "@/content/index.js";
 import { attemptId, dailyProblem, dateKey, dayId, emptyAttempt, finishStep, rateCard } from "./model.js";
 import * as db from "./db.js";
 
-export const DEFAULT_SETTINGS = { id: "settings", kind: "settings", theme: "system", tint: "violet", keepAwake: true };
+export const DEFAULT_SETTINGS = { id: "settings", kind: "settings", theme: "system", tint: "blue", keepAwake: true };
 
 export const records = signal(new Map());
 export const loaded = signal(false);

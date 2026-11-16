@@ -19,6 +19,8 @@ export function ProgressPage() {
   const file = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
   const accuracy = accuracyByTag(tries, PROBLEM_INDEX);
+  // The topic to work on: lowest accuracy among those with a few answers, if it's below 70%.
+  const weakTag = accuracy.filter((row) => row.total >= 3 && row.pct < 70).sort((a, b) => a.pct - b.pct)[0]?.tag;
   const finished = tries.filter((a: any) => a.completedOn).length;
 
   const download = () => {
@@ -56,23 +58,29 @@ export function ProgressPage() {
 
       <Section footer="First answers only, from every quiz you've taken." title="Accuracy by topic">
         {accuracy.length ? (
-          <Card className="flex flex-col gap-3.5 p-4">
-            {accuracy.map((row) => (
-              <div className="flex flex-col gap-1.5" key={row.tag}>
-                <div className="flex justify-between text-[14px]">
-                  <span className="font-medium capitalize">{tagLabel(row.tag)}</span>
-                  <span className="text-muted-foreground tabular">
-                    {row.pct}% · {row.right}/{row.total}
-                  </span>
+          <Card className="flex flex-col gap-4 p-4">
+            {accuracy.map((row) => {
+              const weakest = row.tag === weakTag;
+              return (
+                <div className="flex flex-col gap-2" key={row.tag}>
+                  <div className="flex items-baseline justify-between text-[14px]">
+                    <span className="font-medium">
+                      {tagLabel(row.tag)}
+                      {weakest ? <span className="ml-2 text-[12px] font-normal text-primary">weakest</span> : null}
+                    </span>
+                    <span className="font-mono text-[12px] text-muted-foreground tabular">
+                      {row.pct}% · {row.right}/{row.total}
+                    </span>
+                  </div>
+                  <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                    <div className={cn("h-full rounded-full", weakest ? "bg-primary" : "bg-foreground/35")} style={{ width: `${Math.max(row.pct, 3)}%` }} />
+                  </div>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full bg-muted">
-                  <div className={cn("h-full rounded-full", row.pct >= 70 ? "bg-success" : row.pct >= 40 ? "bg-pr" : "bg-destructive")} style={{ width: `${Math.max(row.pct, 3)}%` }} />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </Card>
         ) : (
-          <Card className="p-4 text-[14.5px] text-muted-foreground">Take a quiz to see how you do by topic.</Card>
+          <Card className="p-4 text-[14px] text-muted-foreground">Take a quiz to see how you do by topic.</Card>
         )}
       </Section>
 
@@ -93,11 +101,11 @@ export function ProgressPage() {
               <button
                 aria-checked={prefs.tint === tint.id}
                 aria-label={tint.label}
-                className={cn("size-10 rounded-full ring-offset-2 ring-offset-card transition-shadow", prefs.tint === tint.id && "ring-2 ring-foreground")}
+                className={cn("size-10 rounded-full ring-offset-2 ring-offset-card transition-shadow duration-150", prefs.tint === tint.id && "ring-2 ring-foreground")}
                 key={tint.id}
                 onClick={() => saveSettings({ tint: tint.id })}
                 role="radio"
-                style={{ background: `linear-gradient(135deg, ${tint.colors[0]}, ${tint.colors[1]})` }}
+                style={{ background: tint.color }}
                 type="button"
               />
             ))}

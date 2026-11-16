@@ -3,7 +3,7 @@
 import { Check, ChevronDown, Layers } from "lucide-react";
 import { useState } from "react";
 import { Card, Chip, List, Page, Row, Section, TopBar } from "@/components/kit";
-import { Difficulty, tagLabel, type Problem } from "@/components/problem";
+import { Difficulty, SetTicks, tagLabel, type Problem } from "@/components/problem";
 import { CARDS, PROBLEMS } from "@/content/index.js";
 import { BOX_DAYS, isDue, stepsDone } from "@/lib/model.js";
 import { attempts, cardStates, today, todayProblemId } from "@/lib/store.js";
@@ -38,8 +38,8 @@ export function Library() {
             const n = stepsDone(attempt).length;
             return (
               <Row chevron href={`#/problem/${p.id}`} key={p.id} subtitle={p.id === todayId ? "Today's problem" : p.tags.map(tagLabel).join(" · ")} title={p.title}>
-                <span className="flex shrink-0 items-center gap-2">
-                  {attempt?.completedOn ? <Check className="size-5 text-success" strokeWidth={3} /> : n ? <span className="text-[13px] text-muted-foreground tabular">{n}/4</span> : null}
+                <span className="flex shrink-0 items-center gap-3">
+                  {attempt?.completedOn ? <Check className="size-5 text-success" strokeWidth={2.5} /> : n ? <SetTicks done={n} /> : null}
                   <Difficulty level={p.difficulty} />
                 </span>
               </Row>
@@ -66,16 +66,16 @@ export function Deck() {
           const on = open === card.id;
           return (
             <Card key={card.id}>
-              <button aria-expanded={on} className="flex w-full items-center gap-3 px-4 py-3.5 text-left" onClick={() => setOpen(on ? null : card.id)} type="button">
-                <span className="flex-1 text-[15.5px] font-medium">{card.front}</span>
+              <button aria-expanded={on} className="flex w-full items-center gap-3 px-4 py-4 text-left" onClick={() => setOpen(on ? null : card.id)} type="button">
+                <span className="flex-1 text-[15px] font-medium">{card.front}</span>
                 <span aria-label={`Box ${box} of ${BOX_DAYS.length - 1}`} className="flex gap-0.5">
                   {BOX_DAYS.slice(1).map((_, i) => (
                     <span className={cn("size-1.5 rounded-full", i < box ? "bg-primary" : "bg-muted")} key={i} />
                   ))}
                 </span>
-                <ChevronDown className={cn("size-4 text-muted-foreground transition-transform", on && "rotate-180")} strokeWidth={2.6} />
+                <ChevronDown className={cn("size-4 text-muted-foreground transition-transform", on && "rotate-180")} strokeWidth={2} />
               </button>
-              {on ? <p className="px-4 pb-4 text-[14.5px] leading-relaxed text-foreground/85">{card.back}</p> : null}
+              {on ? <p className="px-4 pb-4 text-[14px] leading-relaxed text-foreground/85">{card.back}</p> : null}
             </Card>
           );
         })}

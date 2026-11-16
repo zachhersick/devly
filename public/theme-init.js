@@ -9,5 +9,5 @@
   var theme = saved.theme || "system";
   var dark = theme === "dark" || (theme !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
   if (dark) root.classList.add("dark");
-  root.dataset.tint = saved.tint || "violet";
+  root.dataset.tint = saved.tint || "blue";
 })();

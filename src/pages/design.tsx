@@ -69,15 +69,15 @@ export function DesignPage({ id }: { id: string }) {
         <p className="text-[15px] leading-relaxed">{problem.prompt}</p>
         <Requirements problem={problem} />
       </Card>
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <textarea
           aria-label="Your design"
-          className="surface min-h-56 w-full resize-y rounded-2xl p-4 text-[15.5px] leading-relaxed outline-none placeholder:text-muted-foreground/70 focus:ring-2 focus:ring-ring/50"
+          className="surface min-h-56 w-full resize-y rounded-2xl p-4 text-[15px] leading-relaxed outline-none placeholder:text-muted-foreground/70 focus:ring-2 focus:ring-ring/50"
           onChange={(event) => edit(event.target.value)}
           placeholder={PLACEHOLDER}
           value={draft}
         />
-        <span className="px-1 text-right text-[12.5px] text-muted-foreground tabular">{words} words · saved on this device</span>
+        <span className="px-1 text-right text-[12px] text-muted-foreground tabular">{words} words · saved on this device</span>
       </div>
 
       {revealed ? (
@@ -98,7 +98,7 @@ export function DesignPage({ id }: { id: string }) {
                       }}
                       type="button"
                     >
-                      <span className={cn("grid size-6 shrink-0 place-items-center rounded-full border-2 border-input", on && "border-success bg-success text-white")}>{on ? <Check className="size-3.5" strokeWidth={3.4} /> : null}</span>
+                      <span className={cn("grid size-6 shrink-0 place-items-center rounded-full border-2 border-input", on && "border-success bg-success text-white")}>{on ? <Check className="size-3.5" strokeWidth={2.5} /> : null}</span>
                       {point}
                     </button>
                   );
@@ -111,7 +111,7 @@ export function DesignPage({ id }: { id: string }) {
               <Card className="flex flex-col gap-4 p-5">
                 {problem.modelAnswer.map((part) => (
                   <div key={part.heading}>
-                    <h3 className="mb-1 text-[15px] font-semibold">{part.heading}</h3>
+                    <h3 className="mb-1 text-[15px] font-medium">{part.heading}</h3>
                     <p className="text-[15px] leading-relaxed text-foreground/85">{part.body}</p>
                   </div>
                 ))}

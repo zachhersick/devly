@@ -3,7 +3,7 @@
 import { BookOpen, CalendarCheck, TrendingUp } from "lucide-react";
 import { AnimatePresence, motion, MotionConfig } from "motion/react";
 import { type ReactNode, useEffect, useRef } from "react";
-import { spring } from "@/components/kit";
+import { softSpring, spring } from "@/components/kit";
 import { PROBLEM_INDEX } from "@/content/index.js";
 import { route } from "@/lib/router.js";
 import { loaded } from "@/lib/store.js";
@@ -42,14 +42,14 @@ function TabBar() {
   const { page } = useValue(route) as { page: string };
   return (
     <nav aria-label="Main" className="pb-safe pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4">
-      <div className="glass pointer-events-auto mb-3 flex w-full max-w-sm items-center justify-between rounded-full p-1.5 shadow-[0_16px_40px_-16px_rgba(0,0,0,0.55)]">
+      <div className="glass pointer-events-auto mb-3 flex w-full max-w-sm items-center justify-between rounded-full p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.12)]">
         {TABS.map((tab) => {
           const on = tab.match.includes(page);
           const Icon = tab.icon;
           return (
-            <a aria-current={on ? "page" : undefined} className={cn("relative flex h-12 flex-1 flex-col items-center justify-center gap-0.5 rounded-full text-[10.5px] font-medium", on ? "text-primary" : "text-muted-foreground")} href={`#/${tab.page}`} key={tab.page}>
+            <a aria-current={on ? "page" : undefined} className={cn("relative flex h-12 flex-1 flex-col items-center justify-center gap-0.5 rounded-full text-[11px] font-medium", on ? "text-primary" : "text-muted-foreground")} href={`#/${tab.page}`} key={tab.page}>
               {on ? <motion.span className="absolute inset-0 rounded-full bg-primary/14" layoutId="tab-pill" transition={spring} /> : null}
-              <Icon className="relative size-[21px]" strokeWidth={on ? 2.4 : 2} />
+              <Icon className="relative size-5" strokeWidth={on ? 2 : 1.75} />
               <span className="relative">{tab.label}</span>
             </a>
           );
@@ -82,7 +82,7 @@ export default function App() {
           exit={{ opacity: 0, x: depth ? -24 * direction : 0, scale: depth ? 1 : 0.985 }}
           initial={{ opacity: 0, x: depth ? 40 * direction : 0, scale: depth ? 1 : 0.985 }}
           key={key}
-          transition={{ type: "spring", stiffness: 380, damping: 36 }}
+          transition={softSpring}
         >
           {pageFor(r.page, r.id)}
         </motion.main>

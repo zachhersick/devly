@@ -77,6 +77,12 @@ localhost unless the URL has `?sw`.
   `styles.css`. Keep practice actions in the bottom thumb zone, the tab bar hidden
   on practice pages, and preserve light/dark themes, safe areas and accessible
   labels. New practice pages call `useWakeLock()`.
+- Look: graphite neutrals, one accent (default marker blue, `blue` tint) used for
+  the primary action, selection and progress only. The architecture diagram is
+  the one multi-colored thing; no glows, gradients, uppercase labels or springs
+  (motion uses `spring`/`softSpring` from `kit.tsx`, which are ease-out tweens).
+  Step progress always shows as `SetTicks` (four sets); counts and meta use
+  `font-mono`. Weights 400–500, sizes on the existing scale.
 - Don't reformat unrelated files or edit generated `dist/` output.
 
 ## Content rules

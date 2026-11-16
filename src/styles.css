@@ -1,76 +1,86 @@
 @import "tailwindcss";
 @import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ---------- tokens ----------
-   Dark is the default look; light mode swaps the neutrals. The accent comes
-   from data-tint on <html> and drives buttons, rings, charts and gradients. */
+   Graphite neutrals in both themes; the content (the diagram) carries the color.
+   One accent from data-tint on <html>, a darker shade on light so white text on
+   it stays readable and a lighter one on dark, where it takes dark text. */
 :root {
-  --radius: 1.25rem;
-  --tint: #3b82f6;
-  --tint-2: #8b5cf6;
-  --tint-3: #06b6d4;
+  --radius: 1rem;
+  --tint: #2563eb;
 
-  --background: #f5f6f8;
-  --foreground: #0b0c0e;
+  --background: #fafafa;
+  --foreground: #171717;
   --card: #ffffff;
-  --card-foreground: #0b0c0e;
+  --card-foreground: #171717;
   --popover: #ffffff;
-  --popover-foreground: #0b0c0e;
+  --popover-foreground: #171717;
   --primary: var(--tint);
   --primary-foreground: #ffffff;
-  --secondary: rgba(15, 17, 22, 0.05);
-  --secondary-foreground: #0b0c0e;
-  --muted: rgba(15, 17, 22, 0.05);
-  --muted-foreground: #6b7079;
-  --accent: rgba(15, 17, 22, 0.06);
-  --accent-foreground: #0b0c0e;
-  --destructive: #ef4444;
-  --border: rgba(15, 17, 22, 0.08);
-  --input: rgba(15, 17, 22, 0.1);
+  --secondary: rgba(23, 23, 23, 0.05);
+  --secondary-foreground: #171717;
+  --muted: rgba(23, 23, 23, 0.05);
+  --muted-foreground: #6b6b6b;
+  --accent: rgba(23, 23, 23, 0.06);
+  --accent-foreground: #171717;
+  --destructive: #dc2626;
+  --border: rgba(23, 23, 23, 0.08);
+  --input: rgba(23, 23, 23, 0.12);
   --ring: var(--tint);
   --success: #16a34a;
-  --pr: #d97706;
-  --glass: rgba(255, 255, 255, 0.72);
-  --glass-border: rgba(15, 17, 22, 0.06);
-  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 8px 24px -12px rgba(15, 17, 22, 0.18);
+  --pr: #b45309;
+  --glass: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(23, 23, 23, 0.08);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --grid-dot: rgba(23, 23, 23, 0.1);
   color-scheme: light;
 }
 
 .dark {
-  --background: #07080a;
-  --foreground: #f4f5f7;
-  --card: #111215;
-  --card-foreground: #f4f5f7;
-  --popover: #15171b;
-  --popover-foreground: #f4f5f7;
-  --secondary: rgba(255, 255, 255, 0.06);
-  --secondary-foreground: #f4f5f7;
-  --muted: rgba(255, 255, 255, 0.06);
-  --muted-foreground: #8b909a;
-  --accent: rgba(255, 255, 255, 0.08);
-  --accent-foreground: #f4f5f7;
-  --destructive: #f87171;
-  --border: rgba(255, 255, 255, 0.07);
-  --input: rgba(255, 255, 255, 0.1);
-  --success: #4ade80;
-  --pr: #fbbf24;
-  --glass: rgba(17, 18, 21, 0.72);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 12px 32px -16px rgba(0, 0, 0, 0.8);
+  --background: #141415;
+  --foreground: #ededed;
+  --card: #1b1b1d;
+  --card-foreground: #ededed;
+  --popover: #1f1f21;
+  --popover-foreground: #ededed;
+  --primary-foreground: #0f0f10;
+  --secondary: rgba(237, 237, 237, 0.07);
+  --secondary-foreground: #ededed;
+  --muted: rgba(237, 237, 237, 0.07);
+  --muted-foreground: #8e8e94;
+  --accent: rgba(237, 237, 237, 0.09);
+  --accent-foreground: #ededed;
+  --destructive: #e5484d;
+  --border: rgba(237, 237, 237, 0.08);
+  --input: rgba(237, 237, 237, 0.12);
+  --success: #4cc38a;
+  --pr: #e5a83b;
+  --glass: rgba(27, 27, 29, 0.84);
+  --glass-border: rgba(237, 237, 237, 0.08);
+  --shadow-card: none;
+  --grid-dot: rgba(237, 237, 237, 0.09);
   color-scheme: dark;
 }
 
-[data-tint="blue"] { --tint: #3b82f6; --tint-2: #8b5cf6; --tint-3: #06b6d4; }
-[data-tint="orange"] { --tint: #f97316; --tint-2: #ef4444; --tint-3: #f59e0b; }
-[data-tint="green"] { --tint: #22c55e; --tint-2: #14b8a6; --tint-3: #84cc16; }
-[data-tint="violet"] { --tint: #8b5cf6; --tint-2: #ec4899; --tint-3: #6366f1; }
-[data-tint="pink"] { --tint: #ec4899; --tint-2: #f43f5e; --tint-3: #a855f7; }
-[data-tint="teal"] { --tint: #14b8a6; --tint-2: #3b82f6; --tint-3: #22d3ee; }
+[data-tint="blue"] { --tint: #2563eb; }
+[data-tint="orange"] { --tint: #c2410c; }
+[data-tint="green"] { --tint: #15803d; }
+[data-tint="violet"] { --tint: #7c3aed; }
+[data-tint="pink"] { --tint: #be185d; }
+[data-tint="teal"] { --tint: #0f766e; }
+.dark[data-tint="blue"] { --tint: #60a5fa; }
+.dark[data-tint="orange"] { --tint: #fb923c; }
+.dark[data-tint="green"] { --tint: #4ade80; }
+.dark[data-tint="violet"] { --tint: #a78bfa; }
+.dark[data-tint="pink"] { --tint: #f472b6; }
+.dark[data-tint="teal"] { --tint: #2dd4bf; }
 
 @theme inline {
   --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -92,8 +102,6 @@
   --color-success: var(--success);
   --color-pr: var(--pr);
   --color-tint: var(--tint);
-  --color-tint-2: var(--tint-2);
-  --color-tint-3: var(--tint-3);
   --color-glass: var(--glass);
   --color-glass-border: var(--glass-border);
   --radius-sm: calc(var(--radius) - 8px);
@@ -101,6 +109,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --shadow-card: var(--shadow-card);
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
 }
 
 /* ---------- base ---------- */
@@ -125,15 +134,21 @@
 @utility glass {
   background: var(--glass);
   border: 1px solid var(--glass-border);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(160%) blur(16px);
+  backdrop-filter: saturate(160%) blur(16px);
 }
 @utility surface {
   background: var(--card);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-card);
 }
-@utility tint-glow { background: radial-gradient(120% 120% at 0% 0%, color-mix(in oklab, var(--tint) 22%, transparent), transparent 60%); }
+/* The whiteboard the diagram is drawn on: a quiet dot grid. */
+@utility whiteboard {
+  background-color: var(--muted);
+  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1.2px);
+  background-size: 16px 16px;
+  background-position: 8px 8px;
+}
 @utility no-scrollbar {
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }

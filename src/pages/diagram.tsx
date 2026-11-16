@@ -43,13 +43,13 @@ export function DiagramPage({ id }: { id: string }) {
       title="Diagram"
     >
       <Progress current={step} total={steps.length} />
-      <Card className="p-2">
+      <Card className="whiteboard p-2">
         <button aria-label={last ? "Diagram complete" : "Show next step"} className="block w-full" onClick={() => !last && move(step + 1)} type="button">
           <DiagramView diagram={problem.diagram} step={step} />
         </button>
       </Card>
       <motion.p animate={{ opacity: 1, y: 0 }} className="px-1 text-[16px] leading-relaxed" initial={{ opacity: 0, y: 6 }} key={step}>
-        <span className="mr-1.5 font-semibold text-primary tabular">
+        <span className="mr-2 font-mono text-[13px] text-primary tabular">
           {step + 1}/{steps.length}
         </span>
         {steps[step].caption}

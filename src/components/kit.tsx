@@ -9,8 +9,10 @@ import { back } from "@/lib/router.js";
 import { haptic } from "@/lib/haptics.js";
 import { cn } from "@/lib/utils";
 
-export const spring = { type: "spring", stiffness: 420, damping: 34 } as const;
-export const softSpring = { type: "spring", stiffness: 260, damping: 30 } as const;
+// One ease-out curve everywhere: quick for feedback, a little longer for things entering.
+export const ease = [0.2, 0, 0, 1] as const;
+export const spring = { type: "tween", ease, duration: 0.2 } as const;
+export const softSpring = { type: "tween", ease, duration: 0.3 } as const;
 
 // ---------- page frame ----------
 
@@ -59,14 +61,14 @@ export function TopBar({
                 onClick={() => back(backTo)}
                 type="button"
               >
-                <ChevronLeft className="size-6 shrink-0" strokeWidth={2.4} />
+                <ChevronLeft className="size-6 shrink-0" strokeWidth={2} />
                 <span className="truncate text-[15px] font-medium">{backLabel}</span>
               </button>
             ) : null}
           </div>
           <motion.div
             animate={{ opacity: compact ? 1 : 0, y: compact ? 0 : 6 }}
-            className="max-w-[55vw] truncate text-center text-[15px] font-semibold"
+            className="max-w-[55vw] truncate text-center text-[15px] font-medium"
             initial={false}
           >
             {title}
@@ -77,7 +79,7 @@ export function TopBar({
       {large ? (
         <motion.div animate={{ opacity: 1, y: 0 }} className="-mt-4 px-1" initial={{ opacity: 0, y: 8 }} transition={softSpring}>
           {eyebrow ? <p className="mb-1 text-[13px] font-medium text-muted-foreground">{eyebrow}</p> : null}
-          {children ?? <h1 className="text-[34px] leading-[1.1] font-semibold tracking-[-0.03em]">{title}</h1>}
+          {children ?? <h1 className="text-[32px] leading-[1.1] font-medium">{title}</h1>}
           {subtitle ? <p className="mt-1 text-[15px] text-muted-foreground">{subtitle}</p> : null}
         </motion.div>
       ) : null}
@@ -92,7 +94,7 @@ export function Section({ title, action, footer, children, className }: { title?
     <section className={cn("flex flex-col gap-3", className)}>
       {title || action ? (
         <div className="flex items-baseline justify-between gap-3 px-1">
-          {title ? <h2 className="text-[19px] font-semibold tracking-[-0.02em]">{title}</h2> : <span />}
+          {title ? <h2 className="text-[18px] font-medium">{title}</h2> : <span />}
           {action ? <div className="text-[14px] text-muted-foreground">{action}</div> : null}
         </div>
       ) : null}
@@ -104,7 +106,7 @@ export function Section({ title, action, footer, children, className }: { title?
 
 export function Card({ className, children, ...props }: React.ComponentProps<"div">) {
   return (
-    <div className={cn("surface overflow-hidden rounded-3xl", className)} {...props}>
+    <div className={cn("surface overflow-hidden rounded-2xl", className)} {...props}>
       {children}
     </div>
   );
@@ -148,19 +150,19 @@ export function Row({
   const body = (
     <>
       {Icon ? (
-        <span className={cn("grid size-9 shrink-0 place-items-center rounded-xl bg-primary/15 text-primary", iconClass)}>
-          <Icon className="size-[18px]" strokeWidth={2.2} />
+        <span className={cn("grid size-9 shrink-0 place-items-center rounded-[10px] bg-muted text-foreground/70", iconClass)}>
+          <Icon className="size-[18px]" strokeWidth={1.75} />
         </span>
       ) : null}
       <span className="flex min-w-0 flex-1 flex-col">
         {title !== undefined ? (
-          <span className={cn("truncate text-[15.5px] font-medium", tone === "action" && "text-primary", tone === "danger" && "text-destructive")}>{title}</span>
+          <span className={cn("truncate text-[15px] font-medium", tone === "action" && "text-primary", tone === "danger" && "text-destructive")}>{title}</span>
         ) : null}
-        {subtitle ? <span className="truncate text-[13.5px] text-muted-foreground">{subtitle}</span> : null}
+        {subtitle ? <span className="truncate text-[13px] text-muted-foreground">{subtitle}</span> : null}
       </span>
       {value !== undefined && value !== null ? <span className="shrink-0 text-right text-[15px] text-muted-foreground tabular">{value}</span> : null}
       {children}
-      {chevron ? <ChevronRight className="-mr-1 size-[18px] shrink-0 text-muted-foreground/60" strokeWidth={2.4} /> : null}
+      {chevron ? <ChevronRight className="-mr-1 size-[18px] shrink-0 text-muted-foreground/60" strokeWidth={2} /> : null}
     </>
   );
   const classes = cn(
@@ -238,7 +240,7 @@ export function Toggle({ checked, onChange, label }: { checked: boolean; onChang
     <button
       aria-checked={checked}
       aria-label={label}
-      className={cn("relative h-[31px] w-[51px] shrink-0 rounded-full p-[2px] transition-colors duration-200", checked ? "bg-primary" : "bg-input")}
+      className={cn("relative h-8 w-13 shrink-0 rounded-full p-0.5 transition-colors duration-200", checked ? "bg-primary" : "bg-input")}
       onClick={() => {
         haptic(6);
         onChange(!checked);
@@ -246,7 +248,7 @@ export function Toggle({ checked, onChange, label }: { checked: boolean; onChang
       role="switch"
       type="button"
     >
-      <motion.span animate={{ x: checked ? 20 : 0 }} className="block size-[27px] rounded-full bg-white shadow-md" transition={spring} />
+      <motion.span animate={{ x: checked ? 20 : 0 }} className="block size-7 rounded-full bg-white shadow-sm" transition={spring} />
     </button>
   );
 }
@@ -255,11 +257,11 @@ export function Stepper({ value, onChange, min = 0, max = 99, step = 1, label, f
   return (
     <div aria-label={label} className="flex items-center gap-1 rounded-full bg-muted p-1" role="group">
       <button aria-label={`Fewer ${label}`} className="grid size-8 place-items-center rounded-full active:bg-accent disabled:opacity-30" disabled={value <= min} onClick={() => onChange(Math.max(min, value - step))} type="button">
-        <Minus className="size-4" strokeWidth={2.6} />
+        <Minus className="size-4" strokeWidth={2} />
       </button>
-      <span className="min-w-9 text-center text-[15px] font-semibold tabular">{format(value)}</span>
+      <span className="min-w-9 text-center text-[15px] font-medium tabular">{format(value)}</span>
       <button aria-label={`More ${label}`} className="grid size-8 place-items-center rounded-full active:bg-accent disabled:opacity-30" disabled={value >= max} onClick={() => onChange(Math.min(max, value + step))} type="button">
-        <Plus className="size-4" strokeWidth={2.6} />
+        <Plus className="size-4" strokeWidth={2} />
       </button>
     </div>
   );
@@ -269,7 +271,7 @@ export function Chip({ on, children, onClick, className }: { on?: boolean; child
   return (
     <button
       className={cn(
-        "h-9 shrink-0 rounded-full px-3.5 text-[14px] font-medium transition-colors",
+        "h-9 shrink-0 rounded-full px-4 text-[14px] font-medium transition-colors",
         on ? "bg-primary text-primary-foreground" : "bg-muted text-foreground active:bg-accent",
         className
       )}
@@ -310,11 +312,11 @@ export function Sheet({
       <DrawerContent className={cn("rounded-t-[28px]! border-border bg-popover pb-safe outline-none", tall ? "h-[92dvh] max-h-[92dvh]!" : "max-h-[92dvh]!")}>
         <div className="grid h-12 shrink-0 grid-cols-[1fr_auto_1fr] items-center px-3">
           <div className="justify-self-start">{left}</div>
-          <DrawerTitle className="max-w-[55vw] truncate text-center text-[16px] font-semibold">{title}</DrawerTitle>
+          <DrawerTitle className="max-w-[55vw] truncate text-center text-[16px] font-medium">{title}</DrawerTitle>
           <div className="justify-self-end">
             {right === undefined ? (
               <button aria-label="Close" className="grid size-8 place-items-center rounded-full bg-muted text-muted-foreground active:bg-accent" onClick={onClose} type="button">
-                <X className="size-4" strokeWidth={2.6} />
+                <X className="size-4" strokeWidth={2} />
               </button>
             ) : (
               right
@@ -332,7 +334,7 @@ export function Sheet({
 
 export function SheetAction({ children, onClick, bold, disabled }: { children: ReactNode; onClick: () => void; bold?: boolean; disabled?: boolean }) {
   return (
-    <button className={cn("h-9 rounded-full px-3 text-[15px] text-primary active:opacity-60 disabled:opacity-35", bold && "font-semibold")} disabled={disabled} onClick={onClick} type="button">
+    <button className={cn("h-9 rounded-full px-3 text-[15px] text-primary active:opacity-60 disabled:opacity-35", bold && "font-medium")} disabled={disabled} onClick={onClick} type="button">
       {children}
     </button>
   );
@@ -342,13 +344,13 @@ export function SheetAction({ children, onClick, bold, disabled }: { children: R
 
 export function Empty({ icon: Icon, title, children, action }: { icon: IconType; title: string; children?: ReactNode; action?: ReactNode }) {
   return (
-    <Card className="tint-glow relative">
+    <Card className="relative">
       <div className="relative flex flex-col items-center gap-2 px-6 py-12 text-center">
-        <span className="mb-2 grid size-14 place-items-center rounded-2xl bg-primary/15 text-primary">
+        <span className="mb-2 grid size-14 place-items-center rounded-2xl bg-muted text-foreground/70">
           <Icon className="size-7" strokeWidth={2} />
         </span>
-        <h3 className="text-[20px] font-semibold tracking-tight">{title}</h3>
-        {children ? <p className="max-w-72 text-[14.5px] text-muted-foreground">{children}</p> : null}
+        <h3 className="text-[20px] font-medium">{title}</h3>
+        {children ? <p className="max-w-72 text-[14px] text-muted-foreground">{children}</p> : null}
         {action ? <div className="mt-3">{action}</div> : null}
       </div>
     </Card>
@@ -362,8 +364,8 @@ export function StatTiles({ items, className }: { items: { label: string; value:
     <div className={cn("grid gap-3", items.length === 4 ? "grid-cols-2" : "grid-cols-3", className)}>
       {items.map((item) => (
         <Card className="flex min-w-0 flex-col gap-1 p-4" key={item.label}>
-          <span className="truncate text-[12.5px] font-medium text-muted-foreground">{item.label}</span>
-          <span className="truncate text-[22px] leading-tight font-semibold tracking-tight tabular">
+          <span className="truncate text-[12px] font-medium text-muted-foreground">{item.label}</span>
+          <span className="truncate text-[24px] leading-tight font-medium tabular">
             {item.value}
             {item.unit ? <span className="ml-0.5 text-[13px] font-medium text-muted-foreground">{item.unit}</span> : null}
           </span>
@@ -376,7 +378,7 @@ export function StatTiles({ items, className }: { items: { label: string; value:
 
 export function FadeIn({ children, delay = 0, className }: { children: ReactNode; delay?: number; className?: string }) {
   return (
-    <motion.div animate={{ opacity: 1, y: 0 }} className={className} initial={{ opacity: 0, y: 14 }} transition={{ ...softSpring, delay }}>
+    <motion.div animate={{ opacity: 1, y: 0 }} className={className} initial={{ opacity: 0, y: 8 }} transition={{ ...softSpring, delay }}>
       {children}
     </motion.div>
   );
