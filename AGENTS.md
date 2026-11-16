@@ -134,6 +134,9 @@ deployment validation.
 - Vercel builds with `npm run build` and serves `dist/` at devly.zachhersick.com,
   deploying on every push to `main` once the project is imported. There are no
   functions or environment variables. See `README.md` for the one-time setup.
+- `package.json` `overrides` pin patched `glob` and `minimatch` under
+  `vite-plugin-pwa`'s `workbox-build` (build-time only). Drop them once
+  `vite-plugin-pwa` ships with patched versions; `npm audit --omit=dev` must stay at 0.
 - All content ships in one JS chunk (about 830 KB, 268 KB gzipped) under a
   `chunkSizeWarningLimit` of 900. If content grows much, load it with dynamic
   imports rather than raising the limit.

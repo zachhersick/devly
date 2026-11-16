@@ -77,6 +77,28 @@ export function longestStreak(days) {
 
 // ---------- attempts ----------
 
+const isDate = (value) => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
+const isStrings = (value) => Array.isArray(value) && value.every((item) => typeof item === "string");
+const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+
+/** Whether a record from a backup has the shape this app writes; anything else is skipped on import. */
+export function validRecord(record) {
+  if (!isObject(record) || typeof record.id !== "string" || !Number.isFinite(record.updatedAt)) return false;
+  if (record.kind === "settings") return record.id === "settings";
+  if (record.kind === "day") return isDate(record.date) && record.id === dayId(record.date) && typeof record.problemId === "string" && isStrings(record.done);
+  if (record.kind === "attempt")
+    return (
+      typeof record.problemId === "string" &&
+      record.id === attemptId(record.problemId) &&
+      isStrings(record.done) &&
+      (record.quiz === undefined || (isObject(record.quiz) && Array.isArray(record.quiz.answers))) &&
+      (record.design === undefined || (isObject(record.design) && typeof (record.design.draft ?? "") === "string" && Array.isArray(record.design.checked ?? []))) &&
+      (record.cards === undefined || (isObject(record.cards) && isStrings(record.cards.rated ?? [])))
+    );
+  if (record.kind === "card") return typeof record.cardId === "string" && record.id === cardStateId(record.cardId) && Number.isInteger(record.box) && record.box >= 0 && record.box < BOX_DAYS.length && isDate(record.due);
+  return false;
+}
+
 export function emptyAttempt(problemId, today) {
   return { id: attemptId(problemId), kind: "attempt", problemId, startedOn: today, quiz: { answers: [] }, diagram: { step: 0 }, design: { draft: "", checked: [] }, cards: { rated: [] }, done: [] };
 }

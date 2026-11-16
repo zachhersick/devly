@@ -2,7 +2,7 @@
 // change. Pages read the computed views below and write through the actions.
 import { computed, signal } from "@preact/signals-core";
 import { PROBLEMS } from "@/content/index.js";
-import { attemptId, dailyProblem, dateKey, dayId, emptyAttempt, finishStep, rateCard } from "./model.js";
+import { attemptId, dailyProblem, dateKey, dayId, emptyAttempt, finishStep, rateCard, validRecord } from "./model.js";
 import * as db from "./db.js";
 
 export const DEFAULT_SETTINGS = { id: "settings", kind: "settings", theme: "system", tint: "blue", keepAwake: true };
@@ -34,7 +34,10 @@ export const todayProblemId = computed(() => dailyProblem(PROBLEMS, days.value, 
 export const todayRecord = computed(() => records.value.get(dayId(today.value)) || null);
 
 export function attemptFor(problemId) {
-  return records.value.get(attemptId(problemId)) || emptyAttempt(problemId, today.value);
+  const empty = emptyAttempt(problemId, today.value);
+  const stored = records.value.get(attemptId(problemId));
+  // Fill any missing parts so an older or hand-edited record can't break a page.
+  return stored ? { ...empty, ...stored, quiz: { ...empty.quiz, ...stored.quiz }, diagram: { ...empty.diagram, ...stored.diagram }, design: { ...empty.design, ...stored.design }, cards: { ...empty.cards, ...stored.cards } } : empty;
 }
 
 export async function load() {
@@ -93,7 +96,7 @@ export function exportData() {
 
 /** From an exported backup: newer copies replace local ones. */
 export async function importRecords(list) {
-  const valid = list.filter((record) => record && typeof record.id === "string" && typeof record.kind === "string" && Number.isFinite(record.updatedAt));
+  const valid = list.filter(validRecord);
   const accepted = valid.filter((record) => record.updatedAt > (records.value.get(record.id)?.updatedAt || 0));
   if (!accepted.length) return 0;
   const next = new Map(records.value);
